@@ -1,0 +1,24 @@
+Package: forecastbox
+Type: Package
+Title: Toolbox of forecasting algorithms wrapped in web application
+Version: 0.1.0.9000
+Description: The package allows a user without R knowledge to use forecast tools from R environment.
+License: License: MIT + file LICENSE
+Authors@R: c(
+    person("Alexander", "Matrunich", , "alexander@matrunich.com", c("aut", "cre")),
+    person("RResults Consulting", role = c("cph", "fnd"))
+    )
+URL: https://gitlab.com/rstatcons/forecastbox
+BugReports: https://gitlab.com/rstatcons/forecastbox/issues
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.0.1
+Depends:
+    R (>= 3.1.2)
+Imports:
+    dplyr (>= 0.7.2),
+    forecast,
+    magrittr,
+    purrr,
+    shiny,
+    tibble
