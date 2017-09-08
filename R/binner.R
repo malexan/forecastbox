@@ -1,5 +1,7 @@
 #' Simple function with Shiny app inside
 #'
+#' Простая функция для тестирования установки под Windows.
+#'
 #' @import shiny
 #' @export
 

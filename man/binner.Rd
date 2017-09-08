@@ -7,5 +7,5 @@
 binner()
 }
 \description{
-Simple function with Shiny app inside
+Простая функция для тестирования установки под Windows.
 }
