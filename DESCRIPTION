@@ -1,7 +1,7 @@
 Package: forecastbox
 Type: Package
 Title: Toolbox of forecasting algorithms wrapped in web application
-Version: 0.1.0.9000
+Version: 0.1.0.9001
 Description: The package allows a user without R knowledge to use forecast tools from R environment.
 License: License: MIT + file LICENSE
 Authors@R: c(
@@ -16,9 +16,12 @@ RoxygenNote: 6.0.1
 Depends:
     R (>= 3.1.2)
 Imports:
+    assertthat,
     dplyr (>= 0.7.2),
     forecast,
     magrittr,
     purrr,
+    readxl,
     shiny,
+    stringr,
     tibble
