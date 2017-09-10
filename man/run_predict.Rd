@@ -4,7 +4,7 @@
 \alias{run_predict}
 \title{Makes predictions}
 \usage{
-run_predict(tbl)
+run_predict(tbl, samplesize = NULL)
 }
 \description{
 Makes predictions

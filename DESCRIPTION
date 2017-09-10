@@ -27,4 +27,5 @@ Imports:
     stringr,
     sweep,
     tibble,
-    timetk
+    timetk,
+    zoo

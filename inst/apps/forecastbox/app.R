@@ -1,3 +1,6 @@
+library("dplyr")
+
+
 shinyApp(
   ui = fluidPage(
     sidebarLayout(
@@ -9,14 +12,25 @@ shinyApp(
           buttonLabel = "Выбрать...",
           placeholder = "Файл не выбран")
       ),
-      mainPanel(plotOutput("hist"))
+      mainPanel(
+        tableOutput("contents")
+      )
     )
   ),
   server = function(input, output) {
-    output$hist <- renderPlot(
-      hist(faithful$eruptions, breaks = 30L,
-           col = "skyblue", border = "white",
-           main = "Продолжительность извержений гейзера, м")
-    )
+    output$contents <- renderTable({
+
+      excel <- input$excel
+
+      if (is.null(excel))
+        return(NULL)
+
+      forecastbox:::import_excel(excel$datapath) %>%
+        forecastbox:::convert_data() %>%
+        forecastbox:::cal_adj() %>%
+        forecastbox:::run_predict(samplesize = 10L) %>%
+        forecastbox:::cal_adj_back()
+
+    })
   }
 )

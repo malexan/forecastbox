@@ -3,10 +3,19 @@
 #' @import dplyr
 #' @import purrr
 
-run_predict <- function(tbl) {
+run_predict <- function(tbl, samplesize = NULL) {
 
-  tbl <- tbl %>%
-    filter(tsid %in% sample(unique(tbl$tsid), 5))
+  if (!is.null(samplesize)) {
+
+    stopifnot(is.numeric(samplesize))
+
+    if (nrow(tbl) > samplesize) {
+
+      tbl <- tbl %>%
+        filter(tsid %in% sample(unique(tbl$tsid), samplesize))
+
+    } else message("Sampling will not be used.")
+  }
 
   # Convert to ts
   by_id <- tbl %>%
@@ -28,6 +37,7 @@ run_predict <- function(tbl) {
     ))
 
   by_id %>%
-    tidyr::unnest_("predtbl", .drop = TRUE)
+    tidyr::unnest_("predtbl", .drop = TRUE) %>%
+    mutate_if(is.numeric, funs(if_else(. <= 0, 0, .)))
 
 }
