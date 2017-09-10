@@ -19,9 +19,12 @@ Imports:
     assertthat,
     dplyr (>= 0.7.2),
     forecast,
+    lubridate,
     magrittr,
     purrr,
     readxl,
     shiny,
     stringr,
-    tibble
+    sweep,
+    tibble,
+    timetk
