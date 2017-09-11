@@ -11,5 +11,5 @@
 forecastbox <- function(browser = TRUE, host = "0.0.0.0") {
   shiny::runApp(
     appDir = system.file("apps", "forecastbox", package = "forecastbox"),
-    launch.browser = browser)
+    launch.browser = browser, host = host)
 }
