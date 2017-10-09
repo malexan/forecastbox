@@ -1,14 +1,14 @@
 #' Converts data frame to ts object.
 #'
-#'@import assertthat
+#' @import assertthat
+#' @export
 
 
 convert_df2ts <- function(data, select = NULL, freq = 12L) {
 
   data <- tibble::as.tibble(data)
 
-  datecol <- colnames(data)[purrr::map_lgl(data,
-                                           ~ "Date" %in% class(.x))]
+  datecol <- timetk::tk_get_timeseries_variables(data)
 
   assert_that(is.string(datecol))
 
@@ -20,11 +20,11 @@ convert_df2ts <- function(data, select = NULL, freq = 12L) {
   year_max <- lubridate::year(end_moment)
   month_max <- lubridate::month(end_moment)
 
-  timetk::tk_ts(data,
-                select = select,
-                start = c(year_min, month_min),
-                end = c(year_max, month_max),
-                frequency = freq
-                )
+  timetk::tk_ts_(data,
+                 select = select,
+                 start = c(year_min, month_min),
+                 end = c(year_max, month_max),
+                 frequency = freq
+  )
 
 }
