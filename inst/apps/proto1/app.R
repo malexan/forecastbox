@@ -1,4 +1,5 @@
 library(shiny)
+library(dplyr)
 
 ui <- fluidPage(
 
@@ -18,20 +19,39 @@ ui <- fluidPage(
 
       # Show a plot of the generated distribution
       mainPanel(
-         plotOutput("forecastPlot")
+         plotOutput("forecastPlot"),
+         tableOutput("forecastData")
       )
    )
 )
 
 server <- function(input, output) {
 
-   output$forecastPlot <- renderPlot({
-
+  frcst <- reactive(
+    {
       fit <- forecast::bats(USAccDeaths)
-      frcst <- forecast::forecast(fit, h = input$horizon)
+      forecast::forecast(fit, h = input$horizon)
+    }
+  )
 
-      plot(frcst)
+  frcst_tbl <- reactive(
+    {
+      sweep::sw_sweep(frcst(),
+                      timekit_idx = TRUE,
+                      rename_index = "date") %>%
+        filter(key == "forecast") %>%
+        select(-key) %>%
+        mutate(date = zoo::as.Date.yearmon(date),
+               date = as.character(date))
+    }
+
+  )
+
+   output$forecastPlot <- renderPlot({
+      plot(frcst())
    })
+
+   output$forecastData <- renderTable(frcst_tbl())
 }
 
 # Run the application
