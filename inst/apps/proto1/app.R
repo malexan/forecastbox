@@ -1,28 +1,36 @@
 library(shiny)
+library(rhandsontable)
 library(dplyr)
+
 
 ui <- fluidPage(
 
-   # Application title
-   titlePanel("Forecast for one time series"),
+  # Application title
+  titlePanel("Forecast for one time series"),
+  tabsetPanel(
+    tabPanel("inputtable"),
+    tabPanel(
+      "results",
+      sidebarLayout(
+        sidebarPanel(
+          sliderInput("horizon",
+                      "Number of periods to forecast:",
+                      min = 1,
+                      max = 12,
+                      value = 3,
+                      round = TRUE,
+                      step = 1)
+        ),
 
-   sidebarLayout(
-      sidebarPanel(
-         sliderInput("horizon",
-                     "Number of periods to forecast:",
-                     min = 1,
-                     max = 12,
-                     value = 3,
-                     round = TRUE,
-                     step = 1)
-      ),
+        # Show a plot of the generated distribution
+        mainPanel(
 
-      # Show a plot of the generated distribution
-      mainPanel(
-         plotOutput("forecastPlot"),
-         tableOutput("forecastData")
+          plotOutput("forecastPlot"),
+          tableOutput("forecastData")
+        )
       )
-   )
+    )
+  )
 )
 
 server <- function(input, output) {
