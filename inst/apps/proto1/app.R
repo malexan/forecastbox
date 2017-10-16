@@ -8,7 +8,12 @@ ui <- fluidPage(
   # Application title
   titlePanel("Forecast for one time series"),
   tabsetPanel(
-    tabPanel("inputtable"),
+    tabPanel(
+      "inputtable",
+      textAreaInput("rawdata",
+                    "Paste one column with data",
+                    width = "150px",
+                    height = "500px")),
     tabPanel(
       "results",
       sidebarLayout(
