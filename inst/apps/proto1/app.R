@@ -1,5 +1,6 @@
 library(shiny)
-library(rhandsontable)
+library(tibble)
+library(lubridate)
 library(dplyr)
 
 
@@ -10,10 +11,46 @@ ui <- fluidPage(
   tabsetPanel(
     tabPanel(
       "inputtable",
-      textAreaInput("rawdata",
-                    "Paste one column with data",
-                    width = "150px",
-                    height = "500px")),
+      sidebarLayout(
+        sidebarPanel(
+          dateInput("startdate",
+                    "Start Date",
+                    weekstart = 1,
+                    width = "200px"),
+          radioButtons("timeunit",
+                       "Time series unit",
+                       c("Day" = "day",
+                         "Week" = "week",
+                         "Month" = "month",
+                         "Quarter" = "quarter",
+                         "Year" = "year")),
+          radioButtons("season",
+                       "Main season duration",
+                       c("Week" = "week",
+                         "Month" = "month",
+                         "Year" = "year")
+          ),
+          textInput("dec", "Decimal point",
+                    value = ".",
+                    width = "50px")
+        ),
+        mainPanel(
+          fluidRow(
+            column(3,
+                   textAreaInput(
+                     "rawdata",
+                     "Replace numbers with your data",
+                     width = "150px",
+                     height = "500px",
+                     value = "1\n2\n3")
+            ),
+            column(5,
+                   tableOutput("tsdatatable")
+            )
+          )
+        )
+      )
+    ),
     tabPanel(
       "results",
       sidebarLayout(
@@ -39,6 +76,26 @@ ui <- fluidPage(
 )
 
 server <- function(input, output) {
+
+  tsdata <- reactive(
+    {
+      rawdata <- read.table(textConnection(input$rawdata),
+                            header = FALSE,
+                            dec = input$dec)
+      rawdata <- rawdata[[1]]
+      timevec <- seq.Date(
+        from = input$startdate,
+        by = input$timeunit,
+        along.with = rawdata
+      )
+      tibble(date = timevec,
+             value = rawdata)
+    }
+  )
+
+  output$tsdatatable <- renderTable(
+    tsdata() %>%
+      mutate(date = as.character(date)))
 
   frcst <- reactive(
     {
