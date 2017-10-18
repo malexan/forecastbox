@@ -1,3 +1,4 @@
+library(forecastbox)
 library(shiny)
 library(tibble)
 library(lubridate)
@@ -23,16 +24,20 @@ ui <- fluidPage(
                          "Week" = "week",
                          "Month" = "month",
                          "Quarter" = "quarter",
-                         "Year" = "year")),
+                         "Year" = "year"),
+                       selected = "month"),
           radioButtons("season",
                        "Main season duration",
                        c("Week" = "week",
                          "Month" = "month",
-                         "Year" = "year")
+                         "Year" = "year"),
+                       selected = "year"
           ),
-          textInput("dec", "Decimal point",
-                    value = ".",
-                    width = "50px")
+          radioButtons("dec",
+                       "Decimal point",
+                       c("." = ".",
+                         "," = ","),
+                       width = "50px")
         ),
         mainPanel(
           fluidRow(
@@ -79,6 +84,20 @@ server <- function(input, output) {
 
   tsdata <- reactive(
     {
+
+      validate(
+        need(stringr::str_detect(
+          input$rawdata,
+          paste0(
+            "^[\\d\\s",
+            if_else(input$dec == ".", "\\.", input$dec),
+            "]+$")),
+          "Only digits, decimial point, space, new line, and tab are allowed in input field"),
+        need(
+          stringr::str_detect(input$rawdata, "\\d"),
+          "No digits in input field")
+        )
+
       rawdata <- read.table(textConnection(input$rawdata),
                             header = FALSE,
                             dec = input$dec)
