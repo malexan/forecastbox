@@ -2,10 +2,13 @@
 % Please edit documentation in R/convert_df2ts.R
 \name{convert_df2ts}
 \alias{convert_df2ts}
-\title{Converts data frame to ts object.}
+\title{Converts data frame to ts object. Only monthly data is supported.}
 \usage{
 convert_df2ts(data, select = NULL, freq = 12L)
 }
+\arguments{
+\item{data}{Data frame}
+}
 \description{
-Converts data frame to ts object.
+Converts data frame to ts object. Only monthly data is supported.
 }

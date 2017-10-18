@@ -1,5 +1,6 @@
-#' Converts data frame to ts object.
+#' Converts data frame to ts object. Only monthly data is supported.
 #'
+#' @param data Data frame
 #' @import assertthat
 #' @export
 
