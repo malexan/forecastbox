@@ -1,4 +1,6 @@
 library(forecastbox)
+library(forecast)
+library(ggplot2)
 library(shiny)
 library(tibble)
 library(lubridate)
@@ -7,29 +9,38 @@ library(dplyr)
 
 ui <- fluidPage(
 
-  # Application title
   titlePanel("Forecast for one time series"),
   tabsetPanel(
     tabPanel(
-      "inputtable",
+      "Data input",
+      helpText(
+        "1. Paste a column with data from Excel.",
+        br(),
+        "2. Choose year and month for the first observation.",
+        br(),
+        "3. Check that the data is imported correctly.",
+        br(),
+        "4. Switch to Forecast panel and view results."),
       sidebarLayout(
         sidebarPanel(
           dateInput("startdate",
-                    "Start Date",
+                    "Date of first observation",
                     weekstart = 1,
+                    startview = "year",
                     width = "200px"),
           radioButtons("timeunit",
                        "Time series unit",
-                       c("Day" = "day",
-                         "Week" = "week",
-                         "Month" = "month",
-                         "Quarter" = "quarter",
-                         "Year" = "year"),
+                       c(# "Day" = "day",
+                         # "Week" = "week",
+                         "Month" = "month" # ,
+                         # "Quarter" = "quarter",
+                         #"Year" = "year"
+                         ),
                        selected = "month"),
           radioButtons("season",
                        "Main season duration",
-                       c("Week" = "week",
-                         "Month" = "month",
+                       c(# "Week" = "week",
+                         # "Month" = "month",
                          "Year" = "year"),
                        selected = "year"
           ),
@@ -44,10 +55,10 @@ ui <- fluidPage(
             column(3,
                    textAreaInput(
                      "rawdata",
-                     "Replace numbers with your data",
+                     "Paste data here:",
                      width = "150px",
                      height = "500px",
-                     value = "1\n2\n3")
+                     value = "")
             ),
             column(5,
                    tableOutput("tsdatatable")
@@ -56,8 +67,11 @@ ui <- fluidPage(
         )
       )
     ),
+    tabPanel("Check the time series",
+             plotOutput("tsplot")
+             ),
     tabPanel(
-      "results",
+      "Forecast",
       sidebarLayout(
         sidebarPanel(
           sliderInput("horizon",
@@ -86,18 +100,17 @@ server <- function(input, output) {
     {
 
       validate(
+        need(
+          stringr::str_detect(input$rawdata, "\\d"),
+          "No digits in input field"),
         need(stringr::str_detect(
           input$rawdata,
           paste0(
             "^[\\d\\s",
             if_else(input$dec == ".", "\\.", input$dec),
             "]+$")),
-          "Only digits, decimial point, space, new line, and tab are allowed in input field"),
-        need(
-          stringr::str_detect(input$rawdata, "\\d"),
-          "No digits in input field")
-        )
-
+          "Only digits, decimial point, space, new line, and tab are allowed in input field")
+      )
       rawdata <- read.table(textConnection(input$rawdata),
                             header = FALSE,
                             dec = input$dec)
@@ -112,13 +125,20 @@ server <- function(input, output) {
     }
   )
 
+  ts1 <- reactive(
+    convert_df2ts(tsdata(), select = "value",
+                  freq = 12L)
+  )
+
   output$tsdatatable <- renderTable(
     tsdata() %>%
       mutate(date = as.character(date)))
 
+  output$tsplot <- renderPlot(autoplot(ts1()))
+
   frcst <- reactive(
     {
-      fit <- forecast::bats(USAccDeaths)
+      fit <- forecast::auto.arima(ts1())
       forecast::forecast(fit, h = input$horizon)
     }
   )
