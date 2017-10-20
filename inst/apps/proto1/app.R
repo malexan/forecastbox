@@ -67,9 +67,13 @@ ui <- fluidPage(
         )
       )
     ),
+
+    # tabPanel Check TS ####
     tabPanel("Check the time series",
              plotOutput("tsplot")
              ),
+
+    # tabPanel Forecast ####
     tabPanel(
       "Forecast",
       sidebarLayout(
@@ -80,10 +84,13 @@ ui <- fluidPage(
                       max = 12,
                       value = 3,
                       round = TRUE,
-                      step = 1)
+                      step = 1),
+          radioButtons("model",
+                       "Model to use:",
+                       c("ARIMA" = "auto.arima",
+                         "Exponential smoothing" = "ets"))
         ),
 
-        # Show a plot of the generated distribution
         mainPanel(
 
           plotOutput("forecastPlot"),
@@ -94,11 +101,11 @@ ui <- fluidPage(
   )
 )
 
+# SERVER ####
 server <- function(input, output) {
-
   tsdata <- reactive(
     {
-
+      # Validation of input ####
       validate(
         need(
           stringr::str_detect(input$rawdata, "\\d"),
@@ -111,6 +118,8 @@ server <- function(input, output) {
             "]+$")),
           "Only digits, decimial point, space, new line, and tab are allowed in input field")
       )
+
+      # Read raw data ####
       rawdata <- read.table(textConnection(input$rawdata),
                             header = FALSE,
                             dec = input$dec)
@@ -125,20 +134,33 @@ server <- function(input, output) {
     }
   )
 
+  # Convert to TS object ####
   ts1 <- reactive(
     convert_df2ts(tsdata(), select = "value",
                   freq = 12L)
   )
 
+  # Generate TS data table ####
   output$tsdatatable <- renderTable(
     tsdata() %>%
       mutate(date = as.character(date)))
 
+  # Original data diagnostics plots
   output$tsplot <- renderPlot(autoplot(ts1()))
 
+  # Build forecast ####
   frcst <- reactive(
     {
-      fit <- forecast::auto.arima(ts1())
+      if (input$model == "auto.arima")
+        fit <- forecast::auto.arima(
+          ts1(),
+          stepwise = FALSE,
+          approximation = FALSE
+        ) else
+          if (input$model == "ets")
+            fit <- forecast::ets(
+              ts1())
+
       forecast::forecast(fit, h = input$horizon)
     }
   )
