@@ -71,7 +71,11 @@ ui <- fluidPage(
     # tabPanel Check TS ####
     tabPanel("Check the time series",
              plotOutput("tsplot"),
-             plotOutput("seasonplot")
+             plotOutput("seasonplot"),
+             plotOutput("seasonalplotpolar"),
+             plotOutput("subseriesplot"),
+             plotOutput("lagplot"),
+             plotOutput("acfplot")
              ),
 
     # tabPanel Forecast ####
@@ -146,14 +150,29 @@ server <- function(input, output) {
     tsdata() %>%
       mutate(date = as.character(date)))
 
-  # Original data diagnostics plots
+  # Original data diagnostics plots ####
   output$tsplot <- renderPlot(autoplot(ts1()))
   output$seasonplot <- renderPlot(
     ggseasonplot(ts1(),
                  year.labels = TRUE,
                  year.labels.left = TRUE)
   )
+  output$seasonalplotpolar <- renderPlot(
+    ggseasonplot(ts1(),
+                 polar = TRUE)
+  )
 
+  output$subseriesplot <- renderPlot(
+    ggsubseriesplot(ts1())
+  )
+
+  output$lagplot <- renderPlot(
+    gglagplot(ts1())
+  )
+
+  output$acfplot <- renderPlot(
+    ggAcf((ts1()))
+  )
   # Build forecast ####
   frcst <- reactive(
     {
