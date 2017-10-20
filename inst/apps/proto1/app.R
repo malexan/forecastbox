@@ -70,7 +70,8 @@ ui <- fluidPage(
 
     # tabPanel Check TS ####
     tabPanel("Check the time series",
-             plotOutput("tsplot")
+             plotOutput("tsplot"),
+             plotOutput("seasonplot")
              ),
 
     # tabPanel Forecast ####
@@ -147,6 +148,11 @@ server <- function(input, output) {
 
   # Original data diagnostics plots
   output$tsplot <- renderPlot(autoplot(ts1()))
+  output$seasonplot <- renderPlot(
+    ggseasonplot(ts1(),
+                 year.labels = TRUE,
+                 year.labels.left = TRUE)
+  )
 
   # Build forecast ####
   frcst <- reactive(
