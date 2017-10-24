@@ -9,8 +9,28 @@ library(dplyr)
 
 ui <- fluidPage(
 
-  titlePanel("Forecast for one time series"),
+  titlePanel("Forecast for one time series (Alpha version)"),
   tabsetPanel(
+    tabPanel(
+      "Overview",
+      h2("Intro"),
+      p("The forecastbox web-service allows user to make predictions based on historical data. ",
+        "Forecastbox works with univariate time series: it uses one row of historical data (sales in dollars, visitors per night, orders per month) to predict future values. "),
+      h2("Amount of data"),
+      p("The longer your time series the better: an forecasting algorithm will be able to extract more information from your data and to build reliable forecast."),
+      p("For montly data it is recommended to have not less than 48 historical observations (four years)."),
+      h2("Feedback"),
+      p(
+        "We would like to hear your opinion, questions and suggestions you get during the use of our web-service. Please send email message to ",
+        a(
+          href = "mailto:forecastbox@matrunich.com",
+          "forecastbox@matrunich.com"),
+        " or fill and issue at ",
+        a(
+          href = "https://gitlab.com/rstatcons/forecastbox/issues/",
+          "forecastbox GitLab repository"), "."
+      )
+    ),
     tabPanel(
       "Data input",
       helpText(
