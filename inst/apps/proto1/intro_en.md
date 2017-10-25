@@ -20,4 +20,4 @@ You should insert your time series data in Data Input panel. Your data must be s
       
 ## Feedback
 
-We would like to hear your opinion, questions and suggestions you get during the use of our web-service. Please send email message to [mailto:forecastbox@matrunich.com](forecastbox@matrunich.com) or fill an issue at [forecastbox GitLab repository](https://gitlab.com/rstatcons/forecastbox/issues/).
+We would like to hear your opinion, questions and suggestions you get during the use of our web-service. Please send email message to [forecastbox@matrunich.com](mailto:forecastbox@matrunich.com) or fill an issue at [forecastbox GitLab repository](https://gitlab.com/rstatcons/forecastbox/issues/).

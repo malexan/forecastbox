@@ -1,6 +1,7 @@
 library(forecastbox)
 library(forecast)
 library(ggplot2)
+library(markdown)
 library(shiny)
 library(tibble)
 library(lubridate)
