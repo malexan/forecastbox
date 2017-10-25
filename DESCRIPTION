@@ -5,7 +5,9 @@ Version: 0.1.0.9004
 Description: The package allows a user without R knowledge to use forecast tools from R environment.
 License: License: MIT + file LICENSE
 Authors@R: c(
-    person("Alexander", "Matrunich", , "alexander@matrunich.com", c("aut", "cre")),
+    person("Alexander", "Matrunich", 
+    email = "alexander@matrunich.com", 
+    role =  c("aut", "cre")),
     person("RResults Consulting", role = c("cph", "fnd"))
     )
 URL: https://gitlab.com/rstatcons/forecastbox
