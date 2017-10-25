@@ -69,11 +69,11 @@ ui <- fluidPage(
     # tabPanel Check TS ####
     tabPanel("Check the time series",
              plotOutput("tsplot"),
+             plotOutput("acfplot"),
              plotOutput("seasonplot"),
              plotOutput("seasonalplotpolar"),
              plotOutput("subseriesplot"),
-             plotOutput("lagplot"),
-             plotOutput("acfplot")
+             plotOutput("lagplot")
              ),
 
     # tabPanel Forecast ####
@@ -148,29 +148,54 @@ server <- function(input, output) {
     tsdata() %>%
       mutate(date = as.character(date)))
 
-  # Original data diagnostics plots ####
+  # Raw data diagnostics plots ####
   output$tsplot <- renderPlot(autoplot(ts1()))
-  output$seasonplot <- renderPlot(
-    ggseasonplot(ts1(),
-                 year.labels = TRUE,
-                 year.labels.left = TRUE)
-  )
-  output$seasonalplotpolar <- renderPlot(
-    ggseasonplot(ts1(),
-                 polar = TRUE)
-  )
-
-  output$subseriesplot <- renderPlot(
-    ggsubseriesplot(ts1())
-  )
-
-  output$lagplot <- renderPlot(
-    gglagplot(ts1())
-  )
-
   output$acfplot <- renderPlot(
     ggAcf((ts1()))
   )
+
+  output$seasonplot <- renderPlot({
+
+    validate(
+      need(length(ts1()) / frequency(ts1()) > 1.5,
+           "Seasonal plot skipped: time series is too short.")
+    )
+
+    ggseasonplot(ts1(),
+                 year.labels = TRUE,
+                 year.labels.left = TRUE)
+  }
+  )
+
+  output$seasonalplotpolar <- renderPlot({
+
+     validate(
+      need(length(ts1()) / frequency(ts1()) > 1.5,
+           "Polar seasonal plot skipped: time series is too short.")
+    )
+
+     ggseasonplot(ts1(),
+                 polar = TRUE)
+  }
+  )
+
+  output$subseriesplot <- renderPlot({
+     validate(
+      need(length(ts1()) / frequency(ts1()) >= 2,
+           "Subseries plot skipped: time series is too short.")
+    )
+    ggsubseriesplot(ts1())
+  }
+  )
+
+  output$lagplot <- renderPlot({
+    validate(
+      need(length(ts1()) / frequency(ts1()) >= 2,
+           "Lag plot skipped: time series is too short.")
+    )
+      gglagplot(ts1())
+
+  })
   # Build forecast ####
   frcst <- reactive(
     {
