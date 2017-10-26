@@ -1,6 +1,7 @@
 library(forecastbox)
 library(forecast)
 library(ggplot2)
+library(lubridate)
 library(markdown)
 library(shiny)
 library(shinythemes)
@@ -129,11 +130,9 @@ server <- function(input, output) {
                             header = FALSE,
                             dec = input$dec)
       rawdata <- rawdata[[1]]
-      timevec <- seq.Date(
-        from = input$startdate,
-        by = input$timeunit,
-        along.with = rawdata
-      )
+      timevec <- input$startdate %m+%
+        months(seq_along(rawdata))
+
       tibble(date = timevec,
              value = rawdata)
     }
