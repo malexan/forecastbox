@@ -3,12 +3,14 @@ library(forecast)
 library(ggplot2)
 library(markdown)
 library(shiny)
+library(shinythemes)
 library(tibble)
 library(lubridate)
 library(dplyr)
 
 
 ui <- fluidPage(
+  theme = shinytheme("superhero"),
 
   titlePanel("Forecast for one time series (Alpha version)"),
   tabsetPanel(
