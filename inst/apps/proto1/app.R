@@ -131,7 +131,7 @@ server <- function(input, output) {
                             dec = input$dec)
       rawdata <- rawdata[[1]]
       timevec <- input$startdate %m+%
-        months(seq_along(rawdata))
+        months(seq_along(rawdata) - 1)
 
       tibble(date = timevec,
              value = rawdata)
