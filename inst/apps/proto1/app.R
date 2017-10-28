@@ -5,8 +5,6 @@ library(lubridate)
 library(markdown)
 library(shiny)
 library(shinythemes)
-library(tibble)
-library(lubridate)
 library(dplyr)
 
 
@@ -88,7 +86,7 @@ ui <- fluidPage(
                       "Number of periods to forecast:",
                       min = 1,
                       max = 12,
-                      value = 3,
+                      value = 6,
                       round = TRUE,
                       step = 1),
           radioButtons("model",
@@ -126,15 +124,10 @@ server <- function(input, output) {
       )
 
       # Read raw data ####
-      rawdata <- read.table(textConnection(input$rawdata),
-                            header = FALSE,
-                            dec = input$dec)
-      rawdata <- rawdata[[1]]
-      timevec <- input$startdate %m+%
-        months(seq_along(rawdata) - 1)
 
-      tibble(date = timevec,
-             value = rawdata)
+      raw_column2tbl(raw_column = input$rawdata,
+                     dec = input$dec,
+                     startdate = input$startdate)
     }
   )
 
