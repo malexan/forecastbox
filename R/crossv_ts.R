@@ -9,10 +9,11 @@
 #' @param tail2CV Integer. It specifies number of time series elements for those predicitions will be build.
 #' @param ... Additional parameters to forecastfunction.
 #'
-#' @return Time series with error.
+#' @return List of forecast objects.
 #'
 #' @import forecast
 #' @import purrr
+#' @export
 
 
 crossv_ts <- function(y, forecastfunction, h = 1, tail2CV = NULL, ...) {

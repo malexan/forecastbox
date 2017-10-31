@@ -16,7 +16,7 @@ crossv_ts(y, forecastfunction, h = 1, tail2CV = NULL, ...)
 \item{...}{Additional parameters to forecastfunction.}
 }
 \value{
-Time series with error.
+List of forecast objects.
 }
 \description{
 Computes the forecast errors obtained by applying forecastfunction to subsets
