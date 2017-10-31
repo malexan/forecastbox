@@ -26,27 +26,35 @@ crossv_ts <- function(y, forecastfunction, h = 1, tail2CV = NULL, ...) {
 
   stopifnot(tail2CV < n)
 
-  possible_frcst_err <- purrr::possibly(
+  possible_frcst <- purrr::possibly(
     function(ts, h = h,
              tsend = tsend, ...) {
       ts_short <- subset(ts, end = tsend)
-      fc <- forecastfunction(ts_short, h = h, ...)
-      ts[tsend + h] - fc$mean[h]
-    }, NA_real_)
+      forecast_fit <- forecastfunction(ts_short, h = h, ...)
+      assert_that("forecast" %in% class(forecast_fit))
+      forecast_fit
+      # Calculate error
+      # ts[tsend + h] - fc$mean[h]
+    }, NULL)
 
-  head_skip_n <- n - tail2CV
+  # head_skip_n <- n - tail2CV
 
-  e <- map_dbl(seq.int(from = n - tail2CV - h + 1, to = n - h),
-               ~ possible_frcst_err(y, h = h, tsend = .x)
+  map(seq.int(from = n - tail2CV - h + 1, to = n - h),
+               ~ possible_frcst(y, h = h, tsend = .x)
   )
+
+  # Produce vector of forecast errors
+  # e <- map_dbl(seq.int(from = n - tail2CV - h + 1, to = n - h),
+  #              ~ possible_frcst_err(y, h = h, tsend = .x)
+  # )
 
   # Add first missing elements
 
-  e <- c(rep(NA_real_, times = head_skip_n), e)
+  # e <- c(rep(NA_real_, times = head_skip_n), e)
 
   # What was it? Convert vector to time series object?
 
-  y / y * e
+  # y / y * e
 
 
 }
