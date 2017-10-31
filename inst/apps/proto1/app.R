@@ -191,20 +191,28 @@ server <- function(input, output) {
 
   })
   # Build forecast ####
-  frcst <- reactive(
+  frcst_mdl <- reactive(
     {
-      if (input$model == "auto.arima")
+      if (input$model == "auto.arima") {
         fit <- forecast::auto.arima(
           ts1(),
           stepwise = FALSE,
           approximation = FALSE
-        ) else
-          if (input$model == "ets")
+        )
+        }
+      else
+          if (input$model == "ets") {
             fit <- forecast::ets(
               ts1())
+          }
 
-      forecast::forecast(fit, h = input$horizon)
+      fit
     }
+  )
+
+  frcst <- reactive({
+    forecast::forecast(frcst_mdl(), h = input$horizon)
+  }
   )
 
   frcst_tbl <- reactive(
