@@ -11,15 +11,18 @@ crossv_ts(y, forecastfunction, h = 1, tail2CV = NULL, ...)
 
 \item{forecastfunction}{Forecasting function. It must be able take ts object as first parameter and h (forecasting horizon) as second parameter.}
 
+\item{h}{Forecast horizon.}
+
 \item{tail2CV}{Integer. It specifies number of time series elements for those predicitions will be build.}
 
 \item{...}{Additional parameters to forecastfunction.}
 }
 \value{
-List of forecast objects.
+A time series object with time index identical to y and containing
+  absolute prediction errors.
 }
 \description{
 Computes the forecast errors obtained by applying forecastfunction to subsets
-of the time series y using a rolling forecast origin. It differs from
-forecast::tsCV by skipping head of the time series, when it is too shot.
+of the time series y using a rolling (accumulating) forecast origin. It
+differs from forecast::tsCV by skipping head of the time series.
 }
