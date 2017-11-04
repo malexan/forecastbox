@@ -3,6 +3,7 @@
 export(binner)
 export(convert_df2ts)
 export(crossv_ts)
+export(crossv_ts_multi)
 export(forecastbox)
 export(raw_column2tbl)
 import(assertthat)
