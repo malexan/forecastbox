@@ -25,3 +25,4 @@ test_that("crossv_ts returns a ts with proper number of NA values", {
   expect_equal(sum(is.na(crossv_ts(gas6, ets_frcst, h = 2, tail2CV = 2))),
                5)
 })
+
