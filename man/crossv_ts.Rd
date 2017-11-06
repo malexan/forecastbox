@@ -18,7 +18,7 @@ crossv_ts(y, forecastfunction, h = 1, tail2CV = NULL, ...)
 \item{...}{Additional parameters to forecastfunction.}
 }
 \value{
-A time series object with time index identical to y and containing
+A time series object containing
   absolute prediction errors.
 }
 \description{

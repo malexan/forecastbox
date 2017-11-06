@@ -10,9 +10,10 @@
 #' @param tail2CV Integer. It specifies number of time series elements for those predicitions will be build.
 #' @param ... Additional parameters to forecastfunction.
 #'
-#' @return A time series object with time index identical to y and containing
+#' @return A time series object containing
 #'   absolute prediction errors.
 #'
+#' @import assertthat
 #' @import forecast
 #' @import purrr
 #' @export
@@ -40,19 +41,16 @@ crossv_ts <- function(y, forecastfunction, h = 1, tail2CV = NULL, ...) {
       ts[tsend + h] - forecast_fit$mean[h]
     }, NA_real_)
 
-  head_skip_n <- n - tail2CV
-
   e <- map_dbl(seq.int(from = n - tail2CV, to = n - h),
                ~ possible_frcst(y, h = h, tsend = .x)
   )
 
-  # Add first missing elements
+  empty_ts <- subset(y / y, start = n - tail2CV,
+                     end = n - h)
 
-  e <- c(rep(NA_real_, times = head_skip_n + h - 1), e)
+  assert_that(length(empty_ts) == length(e))
 
-  # Convert vector to time series object with time index identical to
-  # the original time series
-  y / y * e
+  e <- empty_ts * e
 
-
+  e
 }

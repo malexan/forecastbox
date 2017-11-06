@@ -14,15 +14,15 @@ test_that("crossv_ts returns a ts", {
 
 test_that("crossv_ts returns a ts of proper length", {
   expect_length(crossv_ts(gas24, ets_frcst, h = 1, tail2CV = 2),
-               24)
+               2)
   expect_length(crossv_ts(gas24, ets_frcst, h = 2, tail2CV = 2),
-                24)
+                1)
 })
 
-test_that("crossv_ts returns a ts with proper number of NA values", {
-  expect_equal(sum(is.na(crossv_ts(gas6, ets_frcst, h = 1, tail2CV = 2))),
-               4)
-  expect_equal(sum(is.na(crossv_ts(gas6, ets_frcst, h = 2, tail2CV = 2))),
-               5)
-})
-
+# test_that("crossv_ts returns a ts with proper number of NA values", {
+#   expect_equal(sum(is.na(crossv_ts(gas6, ets_frcst, h = 1, tail2CV = 2))),
+#                4)
+#   expect_equal(sum(is.na(crossv_ts(gas6, ets_frcst, h = 2, tail2CV = 2))),
+#                5)
+# })
+#
