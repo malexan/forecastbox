@@ -3,7 +3,9 @@ library(forecast)
 library(ggplot2)
 library(lubridate)
 library(markdown)
+library(V8)
 library(shiny)
+library(shinyjs)
 library(shinythemes)
 library(dplyr)
 
@@ -193,20 +195,7 @@ server <- function(input, output) {
   # Build forecast ####
   frcst_mdl <- reactive(
     {
-      if (input$model == "auto.arima") {
-        fit <- forecast::auto.arima(
-          ts1(),
-          stepwise = FALSE,
-          approximation = FALSE
-        )
-        }
-      else
-          if (input$model == "ets") {
-            fit <- forecast::ets(
-              ts1())
-          }
-
-      fit
+      fit_ts_mdl(ts1(), model = input$model)
     }
   )
 
