@@ -14,9 +14,16 @@ ui <- fluidPage(
   theme = shinytheme("superhero"),
 
   titlePanel("Forecast for one time series (Alpha version)"),
+
   tabsetPanel(
     tabPanel(
       "Overview",
+      p(paste0("Application version: ", packageVersion("forecastbox"))),
+      p(paste0("Built: ",
+               stringr::str_split(
+                 packageDescription("forecastbox",
+                                    fields = c("Built"),
+                                    drop = T), ";")[[1]][3])),
       includeMarkdown("intro_en.md")
     ),
     tabPanel(
@@ -239,6 +246,7 @@ server <- function(input, output) {
    })
 
    output$forecastData <- renderTable(frcst_tbl())
+
 }
 
 # Run the application

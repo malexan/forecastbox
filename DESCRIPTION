@@ -1,7 +1,7 @@
 Package: forecastbox
 Type: Package
 Title: Toolbox of forecasting algorithms wrapped in web application
-Version: 0.1.0.9006
+Version: 0.1.0.9007
 Description: The package allows a user without R knowledge to use forecast tools from R environment.
 License: License: MIT + file LICENSE
 Authors@R: c(
