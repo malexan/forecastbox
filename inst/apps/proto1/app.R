@@ -93,8 +93,22 @@ ui <- fluidPage(
                       step = 1),
           radioButtons("model",
                        "Model to use:",
-                       c("ARIMA" = "auto.arima",
-                         "Exponential smoothing" = "ets"))
+                       c("Auto ARIMA" = "auto.arima",
+                         "Exponential smoothing" = "ets")),
+          sliderInput("cnfdnc_intrvl1",
+                      "Confidence level 1",
+                      min = 60,
+                      max = 99,
+                      value = 80,
+                      step = 1,
+                      post = "%"),
+          sliderInput("cnfdnc_intrvl2",
+                      "Confidence level 2",
+                      min = 60,
+                      max = 99,
+                      value = 95,
+                      step = 1,
+                      post = "%")
         ),
 
         mainPanel(
@@ -200,7 +214,10 @@ server <- function(input, output) {
   )
 
   frcst <- reactive({
-    forecast::forecast(frcst_mdl(), h = input$horizon)
+    forecast::forecast(frcst_mdl(),
+                       h = input$horizon,
+                       level = c(input$cnfdnc_intrvl1,
+                                 input$cnfdnc_intrvl2))
   }
   )
 
