@@ -6,6 +6,8 @@
 
 frcst_fit_params <- function(model = NULL) {
 
+  stopifnot(!is.null(model))
+
   mdls <- list(
       auto.arima = list(stepwise = FALSE, approximation = FALSE),
       ets = list(),
