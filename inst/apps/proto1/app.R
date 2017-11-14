@@ -11,11 +11,13 @@ library(dplyr)
 
 
 ui <- fluidPage(
+  useShinyjs(),
   theme = shinytheme("superhero"),
 
   titlePanel("Forecast for one time series (Alpha version)"),
 
   tabsetPanel(
+    # Overview tab ####
     tabPanel(
       "Overview",
       p(paste0("Application version: ", packageVersion("forecastbox"))),
@@ -26,6 +28,7 @@ ui <- fluidPage(
                                     drop = T), ";")[[1]][3])),
       includeMarkdown("intro_en.md")
     ),
+    # Data input tab ####
     tabPanel(
       "Data input",
 
@@ -91,6 +94,14 @@ ui <- fluidPage(
       "Forecast",
       sidebarLayout(
         sidebarPanel(
+          radioButtons("auto_slctn",
+                       "How to choose model",
+                       c("Manually" = FALSE,
+                         "Auto" = TRUE)),
+          radioButtons("model",
+                       "Model to use:",
+                       c("Auto ARIMA" = "auto.arima",
+                         "Exponential smoothing" = "ets")),
           sliderInput("horizon",
                       "Number of periods to forecast:",
                       min = 1,
@@ -98,10 +109,6 @@ ui <- fluidPage(
                       value = 6,
                       round = TRUE,
                       step = 1),
-          radioButtons("model",
-                       "Model to use:",
-                       c("Auto ARIMA" = "auto.arima",
-                         "Exponential smoothing" = "ets")),
           sliderInput("cnfdnc_intrvl1",
                       "Confidence level 1",
                       min = 60,
@@ -214,6 +221,12 @@ server <- function(input, output) {
 
   })
   # Build forecast ####
+
+  # Disable model selection if model to be selected automatically
+  observe({
+    shinyjs::toggleState("model", input$auto_slctn != TRUE)
+  })
+
   frcst_mdl <- reactive(
     {
       fit_ts_mdl(ts1(), model = input$model)
