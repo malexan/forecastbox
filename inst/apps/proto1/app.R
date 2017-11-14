@@ -9,6 +9,8 @@ library(shinyjs)
 library(shinythemes)
 library(dplyr)
 
+mdls <- c("ets", "bats", "auto.arima")
+
 
 ui <- fluidPage(
   useShinyjs(),
@@ -229,7 +231,21 @@ server <- function(input, output) {
 
   frcst_mdl <- reactive(
     {
-      fit_ts_mdl(ts1(), model = input$model)
+      if (input$auto_slctn != TRUE) {
+        ftd_mdl <- fit_ts_mdl(ts1(), model = input$model)
+      } else {
+        bst_mdl <- best_mdl(
+          ts1(),
+          h = 1,
+          tail2CV = 3,
+          models = mdls,
+          params = map(mdls,
+                       frcst_fit_params))
+
+        ftd_mdl <- fit_ts_mdl(ts1(), model = bst_mdl)
+      }
+
+      ftd_mdl
     }
   )
 
