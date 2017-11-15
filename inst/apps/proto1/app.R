@@ -7,6 +7,7 @@ library(V8)
 library(shiny)
 library(shinyjs)
 library(shinythemes)
+library(purrr)
 library(dplyr)
 
 mdls <- c("ets", "bats", "auto.arima")
@@ -39,7 +40,7 @@ ui <- fluidPage(
           radioButtons("data_source",
                        "What dataset to use",
                        c("User dataset" = "user",
-                         "Built-in dataset" = "gas")),
+                         "Built-in dataset: gas production in AU" = "gas")),
           div(id = "user_data_props",
               dateInput("startdate",
                         "Date of first observation",
@@ -107,7 +108,7 @@ ui <- fluidPage(
           radioButtons("auto_slctn",
                        "How to choose model",
                        c("Manually" = FALSE,
-                         "Auto" = TRUE)),
+                         "Auto (smallest mean error)" = TRUE)),
           radioButtons("model",
                        "Model to use:",
                        c("Auto ARIMA" = "auto.arima",
@@ -180,8 +181,13 @@ server <- function(input, output) {
 
   # Convert to TS object ####
   ts1 <- reactive(
-    convert_df2ts(tsdata(), select = "value",
-                  freq = 12L)
+    if (input$data_source == "user") {
+      convert_df2ts(tsdata(), select = "value",
+                    freq = 12L)
+    } else
+      if (input$data_source == "gas") {
+        forecast::gas
+      } else stop("Unknown data set option")
   )
 
   # Generate TS data table ####
