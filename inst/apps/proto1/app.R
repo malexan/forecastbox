@@ -11,7 +11,7 @@ library(dplyr)
 
 mdls <- c("ets", "bats", "auto.arima")
 
-
+# UI ####
 ui <- fluidPage(
   useShinyjs(),
   theme = shinytheme("superhero"),
@@ -36,42 +36,50 @@ ui <- fluidPage(
 
       sidebarLayout(
         sidebarPanel(
-          dateInput("startdate",
-                    "Date of first observation",
-                    weekstart = 1,
-                    startview = "year",
-                    width = "200px"),
-          radioButtons("timeunit",
-                       "Time series unit",
-                       c(# "Day" = "day",
-                         # "Week" = "week",
-                         "Month" = "month" # ,
-                         # "Quarter" = "quarter",
-                         #"Year" = "year"
-                         ),
-                       selected = "month"),
-          radioButtons("season",
-                       "Main season duration",
-                       c(# "Week" = "week",
-                         # "Month" = "month",
-                         "Year" = "year"),
-                       selected = "year"
-          ),
-          radioButtons("dec",
-                       "Decimal point",
-                       c("." = ".",
-                         "," = ","),
-                       width = "50px")
+          radioButtons("data_source",
+                       "What dataset to use",
+                       c("User dataset" = "user",
+                         "Built-in dataset" = "gas")),
+          div(id = "user_data_props",
+              dateInput("startdate",
+                        "Date of first observation",
+                        weekstart = 1,
+                        startview = "year",
+                        width = "200px"),
+              radioButtons("timeunit",
+                           "Time series unit",
+                           c(# "Day" = "day",
+                             # "Week" = "week",
+                             "Month" = "month" # ,
+                             # "Quarter" = "quarter",
+                             #"Year" = "year"
+                           ),
+                           selected = "month"),
+              radioButtons("season",
+                           "Main season duration",
+                           c(# "Week" = "week",
+                             # "Month" = "month",
+                             "Year" = "year"),
+                           selected = "year"
+              ),
+              radioButtons("dec",
+                           "Decimal point",
+                           c("." = ".",
+                             "," = ","),
+                           width = "50px")
+          )
         ),
         mainPanel(
           fluidRow(
             column(3,
-                   textAreaInput(
-                     "rawdata",
-                     "Paste data here:",
-                     width = "150px",
-                     height = "500px",
-                     value = "")
+                   div(id = "user_data_input",
+                       textAreaInput(
+                         "rawdata",
+                         "Paste data here:",
+                         width = "150px",
+                         height = "500px",
+                         value = "")
+                   )
             ),
             column(5,
                    tableOutput("tsdatatable")
@@ -137,8 +145,15 @@ ui <- fluidPage(
   )
 )
 
-# SERVER ####
 server <- function(input, output) {
+
+  # Disable data input if user prefers built-in dataset
+  observe({
+    shinyjs::toggleState(
+      condition = input$data_source == "user",
+      selector = "div[id^='user_data']")
+  })
+
   tsdata <- reactive(
     {
       # Validation of input ####
