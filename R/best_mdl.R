@@ -12,7 +12,10 @@ best_mdl <- function(...) {
 
   mdl <- names(mean_errs[mean_errs == min(mean_errs)])
 
-  if (length(mdl) == 1L) warning("Result of model selection is not length one")
+  if (length(mdl) != 1L)
+    warning(
+      paste0("Result of model selection is not length one: ",
+             paste0(mdl, collapse = ", ")))
 
   mdl
 
