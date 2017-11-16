@@ -1,5 +1,6 @@
 library(forecastbox)
 library(forecast)
+library(dygraphs)
 library(ggplot2)
 library(lubridate)
 library(markdown)
@@ -121,25 +122,18 @@ ui <- fluidPage(
                       value = 6,
                       round = TRUE,
                       step = 1),
-          sliderInput("cnfdnc_intrvl1",
-                      "Confidence level 1",
+          sliderInput("cnfdnc_intrvl",
+                      "Confidence level",
                       min = 60,
                       max = 99,
                       value = 80,
-                      step = 1,
-                      post = "%"),
-          sliderInput("cnfdnc_intrvl2",
-                      "Confidence level 2",
-                      min = 60,
-                      max = 99,
-                      value = 95,
                       step = 1,
                       post = "%")
         ),
 
         mainPanel(
 
-          plotOutput("forecastPlot"),
+          dygraphOutput("forecastPlot"),
           tableOutput("forecastData")
         )
       )
@@ -274,8 +268,7 @@ server <- function(input, output) {
   frcst <- reactive({
     forecast::forecast(frcst_mdl(),
                        h = input$horizon,
-                       level = c(input$cnfdnc_intrvl1,
-                                 input$cnfdnc_intrvl2))
+                       level = input$cnfdnc_intrvl)
   }
   )
 
@@ -292,8 +285,16 @@ server <- function(input, output) {
 
   )
 
-   output$forecastPlot <- renderPlot({
-      plot(frcst())
+   output$forecastPlot <- renderDygraph({
+     cbind(history = frcst()$x,
+           forecast = frcst()$mean,
+           upper = frcst()$upper,
+           lower = frcst()$lower) %>%
+       dygraph()  %>%
+       dyAxis("x", drawGrid = FALSE) %>%
+       dySeries("history", label = "History") %>%
+       dySeries(c("lower", "forecast", "upper"), label = "Forecast") %>%
+       dyRangeSelector()
    })
 
    output$forecastData <- renderTable(frcst_tbl())
