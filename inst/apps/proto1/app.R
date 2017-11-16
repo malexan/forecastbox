@@ -15,6 +15,7 @@ mdls <- c("ets", "bats", "auto.arima")
 # UI ####
 ui <- fluidPage(
   useShinyjs(),
+  tags$head(includeHTML("google-analytics.html")),
   theme = shinytheme("superhero"),
 
   titlePanel("Forecast for one time series (Alpha version)"),
