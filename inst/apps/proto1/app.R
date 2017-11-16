@@ -20,25 +20,14 @@ ui <- fluidPage(
   titlePanel("Forecast for one time series (Alpha version)"),
 
   tabsetPanel(
-    # Overview tab ####
-    tabPanel(
-      "Overview",
-      p(paste0("Application version: ", packageVersion("forecastbox"))),
-      p(paste0("Built: ",
-               stringr::str_split(
-                 packageDescription("forecastbox",
-                                    fields = c("Built"),
-                                    drop = T), ";")[[1]][3])),
-      includeMarkdown("intro_en.md")
-    ),
-    # Data input tab ####
+    # tabPanel Data input ####
     tabPanel(
       "Data input",
 
       sidebarLayout(
         sidebarPanel(
           radioButtons("data_source",
-                       "What dataset to use",
+                       "Dataset to use",
                        c("User dataset" = "user",
                          "Built-in dataset: gas production in AU" = "gas")),
           div(id = "user_data_props",
@@ -90,16 +79,6 @@ ui <- fluidPage(
       )
     ),
 
-    # tabPanel Check TS ####
-    tabPanel("Check the time series",
-             plotOutput("tsplot"),
-             plotOutput("acfplot"),
-             plotOutput("seasonplot"),
-             plotOutput("seasonalplotpolar"),
-             plotOutput("subseriesplot"),
-             plotOutput("lagplot")
-             ),
-
     # tabPanel Forecast ####
     tabPanel(
       "Forecast",
@@ -116,8 +95,8 @@ ui <- fluidPage(
           sliderInput("horizon",
                       "Number of periods to forecast:",
                       min = 1,
-                      max = 12,
-                      value = 6,
+                      max = 36,
+                      value = 24,
                       round = TRUE,
                       step = 1),
           sliderInput("cnfdnc_intrvl",
@@ -135,6 +114,28 @@ ui <- fluidPage(
           tableOutput("forecastData")
         )
       )
+    ),
+
+    # tabPanel Check TS ####
+    tabPanel("Advanced: check the time series",
+             plotOutput("tsplot"),
+             plotOutput("acfplot"),
+             plotOutput("seasonplot"),
+             plotOutput("seasonalplotpolar"),
+             plotOutput("subseriesplot"),
+             plotOutput("lagplot")
+             ),
+
+    # Help tab ####
+    tabPanel(
+      "Help",
+      p(paste0("Application version: ", packageVersion("forecastbox"))),
+      p(paste0("Built: ",
+               stringr::str_split(
+                 packageDescription("forecastbox",
+                                    fields = c("Built"),
+                                    drop = T), ";")[[1]][3])),
+      includeMarkdown("intro_en.md")
     )
   )
 )
