@@ -7,7 +7,6 @@ library(markdown)
 library(V8)
 library(shiny)
 library(shinyjs)
-library(shinythemes)
 library(purrr)
 library(dplyr)
 
@@ -17,7 +16,6 @@ mdls <- c("ets", "bats", "auto.arima")
 ui <- fluidPage(
   tags$head(includeHTML("google-analytics.html")),
   useShinyjs(),
-  theme = shinytheme("superhero"),
 
   titlePanel("Forecast for one time series (Alpha version)"),
 
