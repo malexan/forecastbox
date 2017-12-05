@@ -19,7 +19,7 @@ ui <- fluidPage(
 
   titlePanel("Forecast for one time series (Alpha version)"),
 
-  ui_tabset_panel_main()
+  uiOutput("tabset_panel_main")
 )
 
 # Server ####
@@ -31,6 +31,8 @@ server <- function(input, output) {
       condition = input$data_source == "user",
       selector = "div[id^='user_data']")
   })
+
+  output$tabset_panel_main <- renderUI(ui_tabset_panel_main())
 
   tsdata <- reactive(
     {
