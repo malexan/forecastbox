@@ -12,6 +12,9 @@ library(dplyr)
 
 mdls <- c("ets", "bats", "auto.arima")
 
+# To be replaced by a user management backend
+psswds <- list(test = "123")
+
 # UI ####
 ui <- fluidPage(
   tags$head(includeHTML("google-analytics.html")),
@@ -19,13 +22,24 @@ ui <- fluidPage(
 
   titlePanel("Forecast for one time series (Alpha version)"),
 
-  uiOutput("tabset_panel_main")
+  uiOutput("main")
 )
 
 # Server ####
 server <- function(input, output) {
 
   user_logged <- reactiveVal(FALSE)
+
+  observeEvent(
+    input$.login,
+    if (isTRUE(psswds[[input$.username]] == input$.password)) {
+      user_logged(TRUE)
+    } else {
+      show("message")
+      output$message = renderText("Invalid user name or password")
+      delay(2000, hide("message", anim = TRUE, animType = "fade"))
+    }
+               )
 
   # Disable data input if user prefers built-in dataset
   observe({
@@ -34,9 +48,10 @@ server <- function(input, output) {
       selector = "div[id^='user_data']")
   })
 
-  output$tabset_panel_main <- renderUI(
+  output$main <- renderUI(
     if (user_logged()) ui_tabset_panel_main() else
-      ui_login())
+      ui_login()
+    )
 
   tsdata <- reactive(
     {
