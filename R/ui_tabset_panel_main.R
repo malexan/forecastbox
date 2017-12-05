@@ -1,6 +1,7 @@
 #' Tabset panel for UI
 #'
 #' @import shiny
+#' @export
 
 
 ui_tabset_panel_main <- function() {

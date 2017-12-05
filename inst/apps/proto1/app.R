@@ -25,6 +25,8 @@ ui <- fluidPage(
 # Server ####
 server <- function(input, output) {
 
+  user_logged <- reactiveVal(FALSE)
+
   # Disable data input if user prefers built-in dataset
   observe({
     shinyjs::toggleState(
@@ -32,7 +34,9 @@ server <- function(input, output) {
       selector = "div[id^='user_data']")
   })
 
-  output$tabset_panel_main <- renderUI(ui_tabset_panel_main())
+  output$tabset_panel_main <- renderUI(
+    if (user_logged()) ui_tabset_panel_main() else
+      ui_login())
 
   tsdata <- reactive(
     {
